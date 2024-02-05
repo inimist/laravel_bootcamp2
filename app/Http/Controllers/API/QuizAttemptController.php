@@ -125,13 +125,17 @@ class QuizAttemptController extends Controller
             }
         }
         // echo "<pre>";print_r($request->input());die;
-        $earned_grade = $total_questions !== 0 ? ($correctQuestions / $total_questions) * 10 : null;
-        $result =  $quiz->minpassquestions <= $correctQuestions ? 'pass' : 'fail';
+        $earned_grade = $total_questions !== 0 ? ($correctQuestions / $total_questions) * 100 : null;
+        $min_pass_percentage = $quiz->minpassquestions; // Assuming minpassquestions contains the percentage
+
+        // Check if earned grade is not null and greater than or equal to the minimum pass percentage
+        $result = $earned_grade !== null && $earned_grade >= $min_pass_percentage ? 'pass' : 'fail';
+
         $quizAttempt = QuizAttempt::where('quiz_id', $quiz_id)
             ->where('user_id', $request->user_id)
             ->where('state', 'inprogress')
             ->first();
-       
+           
         if (!$quizAttempt) {
             $quizAttempt = QuizAttempt::create([
                 'user_id' => $request->user_id,
@@ -144,7 +148,7 @@ class QuizAttemptController extends Controller
                 'result' =>  $result,
             ]);
         }
-       
+
         $questionAttemptData = [];
         $questionAttempt = $request->input('questionAttempt');
         if ($questionAttempt !== null && sizeof($questionAttempt)) {

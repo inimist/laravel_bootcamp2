@@ -23,7 +23,7 @@ Route::group([
         return $request->user();
     });
 
-    Route::post('/login', [App\Http\Controllers\API\UserController::class, 'index']);
+    Route::post('/login', [App\Http\Controllers\API\AuthController::class, 'login']);
 
     //Question Routes
     Route::post('/question/create', [App\Http\Controllers\API\QuestionController::class, 'store']);

@@ -50,6 +50,7 @@ class QuizController extends Controller
         $Quiz  = new Quiz;
         $Quiz->name = $request->name;
         $Quiz->description = $request->description;
+        $Quiz->minpassquestions = $request->minpassquestions;
         if ($Quiz->save()) {
             return response()->json('success');
         } else {
