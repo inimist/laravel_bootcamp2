@@ -24,6 +24,8 @@ Route::group([
     });
 
     Route::post('/login', [App\Http\Controllers\API\AuthController::class, 'login']);
+    Route::post('/signup', [App\Http\Controllers\API\AuthController::class, 'signup']);
+    Route::get('/logout', [App\Http\Controllers\API\AuthController::class, 'logout']);
 
     //Question Routes
     Route::post('/question/create', [App\Http\Controllers\API\QuestionController::class, 'store']);

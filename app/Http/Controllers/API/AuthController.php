@@ -14,7 +14,7 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            $token = $request->user()->createToken('token-name')->plainTextToken;
+            $token = Auth::user()->createToken('token-name')->plainTextToken;
 
             return response()->json(['token' => $token]);
         }
@@ -39,5 +39,21 @@ class AuthController extends Controller
         $token = $user->createToken('token-name')->plainTextToken;
 
         return response()->json(['token' => $token]);
+    }
+
+    public function logout(Request $request)
+    {
+        // Check if the user is authenticated
+        if (Auth::logout()) {
+            // Revoke the current user's access token
+           // Auth::user()->tokens()->where('id', optional(Auth::user()->currentAccessToken())->id)->delete();
+
+            // Perform the actual logout
+            //Auth::logout();
+
+            return response()->json(['message' => 'Successfully logged out']);
+        }
+
+        return response()->json(['message' => 'User not authenticated']);
     }
 }
