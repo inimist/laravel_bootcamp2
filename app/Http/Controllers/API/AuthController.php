@@ -14,9 +14,8 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            $token = Auth::user()->createToken('token-name')->plainTextToken;
-
-            return response()->json(['token' => $token]);
+            $userId = Auth::id();
+            return response()->json(['userId' => $userId]);
         }
 
         return response()->json('invalid credential');
@@ -38,7 +37,7 @@ class AuthController extends Controller
 
         $token = $user->createToken('token-name')->plainTextToken;
 
-        return response()->json(['token' => $token]);
+        return response()->json(['userId' => $user->id]);
     }
 
     public function logout(Request $request)
