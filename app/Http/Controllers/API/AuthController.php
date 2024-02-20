@@ -15,7 +15,8 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $userId = Auth::id();
-            return response()->json(['userId' => $userId]);
+            $token = Auth::user()->createToken('auth_token')->plainTextToken;
+            return response()->json(['userId' => $userId, 'token' => $token]);
         }
 
         return response()->json('invalid credential');
@@ -37,22 +38,13 @@ class AuthController extends Controller
 
         $token = $user->createToken('token-name')->plainTextToken;
 
-        return response()->json(['userId' => $user->id]);
+        return response()->json(['userId' => $user->id, 'token' => $token]);
     }
 
     public function logout(Request $request)
     {
-        // Check if the user is authenticated
-        if (Auth::logout()) {
-            // Revoke the current user's access token
-           // Auth::user()->tokens()->where('id', optional(Auth::user()->currentAccessToken())->id)->delete();
-
-            // Perform the actual logout
-            //Auth::logout();
-
-            return response()->json(['message' => 'Successfully logged out']);
-        }
-
-        return response()->json(['message' => 'User not authenticated']);
+        // Revoke the user's current access token
+        $request->user()->tokens()->delete();
+        return response()->json(['message' => 'Logout successful']);
     }
 }

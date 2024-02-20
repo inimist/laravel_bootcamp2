@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\Routing\RouteCompiler;
+use App\Http\Controllers\API\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,7 +26,8 @@ Route::group([
 
     Route::post('/login', [App\Http\Controllers\API\AuthController::class, 'login']);
     Route::post('/signup', [App\Http\Controllers\API\AuthController::class, 'signup']);
-    Route::get('/logout', [App\Http\Controllers\API\AuthController::class, 'logout']);
+    Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
+    
 
     //Question Routes
     Route::post('/question/create', [App\Http\Controllers\API\QuestionController::class, 'store']);
