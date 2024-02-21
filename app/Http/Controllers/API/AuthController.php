@@ -45,6 +45,6 @@ class AuthController extends Controller
     {
         // Revoke the user's current access token
         $request->user()->tokens()->delete();
-        return response()->json(['message' => 'Logout successful']);
+        return response()->json(['success']);
     }
 }
