@@ -111,6 +111,7 @@ class QuizAttemptController extends Controller
         $total_questions = QuizSlot::where('quiz_id', $quiz_id)->count();
         $timefinished = now();
         $correctQuestions = 0; // To get the total number of correct questions user answers
+
         if ($request->questionAttempt) {
             foreach ($request->questionAttempt as $ques_id => $value) {
                 if (!empty($value)) {
@@ -120,10 +121,25 @@ class QuizAttemptController extends Controller
                         $correctQuestions += 1;
                     } elseif ($question['question_type']['qtype'] === 'truefalse' && $value) {
                         $correctQuestions += 1;
+                    } elseif ($question['question_type']['qtype'] === 'multiplechoice-multi') {
+                        $correctAswer  = explode(",", $question['question_answers']['correct_answer']);
+                        $bol = [];
+
+                        foreach ($value as $val) {
+                            if (in_array($val, $correctAswer)) {
+                                $bol[] = 'right';
+                            } else {
+                                $bol[] = 'wrong';
+                            }
+                        }
+                        if (!in_array("wrong", $bol)) {
+                            $correctQuestions += 1;
+                        }
                     }
                 }
             }
         }
+
         // echo "<pre>";print_r($request->input());die;
         $earned_grade = $total_questions !== 0 ? ($correctQuestions / $total_questions) * 100 : null;
         $min_pass_percentage = $quiz->minpassquestions; // Assuming minpassquestions contains the percentage
@@ -135,7 +151,7 @@ class QuizAttemptController extends Controller
             ->where('user_id', $request->user_id)
             ->where('state', 'inprogress')
             ->first();
-           
+
         if (!$quizAttempt) {
             $quizAttempt = QuizAttempt::create([
                 'user_id' => $request->user_id,
@@ -151,11 +167,14 @@ class QuizAttemptController extends Controller
 
         $questionAttemptData = [];
         $questionAttempt = $request->input('questionAttempt');
+
         if ($questionAttempt !== null && sizeof($questionAttempt)) {
             foreach ($questionAttempt as $ques_id => $value) {
                 if (!empty($value)) {
+                    if (is_array($value)) {
+                        $value = implode(',', $value);
+                    }
                     $question = Question::with('questionAnswers', 'questionType')->findOrFail($ques_id);
-
 
                     $questionSummary = $question->title . ':' . $question->questionAnswers->answer_options;
                     $rightAnswer = $question->questionAnswers->correct_answer;
@@ -206,7 +225,7 @@ class QuizAttemptController extends Controller
     public function show($id)
     {
         try {
-            return response()->json(QuizAttempt::with('QuestionAttempt')->find($id));
+            return response()->json(QuizAttempt::with('QuestionAttempt', 'QuestionAttempt.Question')->find($id));
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

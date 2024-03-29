@@ -27,6 +27,11 @@ class Question extends Model
         return $this->hasOne(QuestionAnswer::class, 'question_id');
     }
 
+    public function questionAttempt()
+    {
+        return $this->hasOne(QuestionAttempt::class, 'question_id');
+    }
+
     public function users()
     {
         return $this->belongsTo(User::class, 'creator_id');

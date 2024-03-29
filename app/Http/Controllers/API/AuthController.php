@@ -14,9 +14,10 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials)) {
-            $userId = Auth::id();
+            $user = Auth::user(); //this way we get whole user data
+            // $userId = Auth::id(); this way we get user id.
             $token = Auth::user()->createToken('auth_token')->plainTextToken;
-            return response()->json(['userId' => $userId, 'token' => $token]);
+            return response()->json(['token' => $token, 'userData' => $user]);
         }
 
         return response()->json('invalid credential');

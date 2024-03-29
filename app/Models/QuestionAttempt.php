@@ -22,7 +22,12 @@ class QuestionAttempt extends Model
     
     public function QuizAttempt()
     {
-        return $this->belongTo(QuizAttempt::class);
+        return $this->belongsTo(QuizAttempt::class);
+    }
+
+    public function Question()
+    {
+        return $this->belongsTo(Question::class,'question_id');
     }
 
     // public function Questions()

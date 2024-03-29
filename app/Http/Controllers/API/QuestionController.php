@@ -40,15 +40,15 @@ class QuestionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {   
+    {
         $validator = Validator::make($request->all(), [
             'title' => 'required|unique:questions',
-           // 'description' => 'required',
+            // 'description' => 'required',
             'question_type_id' => 'required',
             'answer_options' => 'required',
             'correct_answer' => 'required',
         ]);
-       // return  $validator->errors();
+        // return  $validator->errors();
         if ($validator->fails()) {
             return response()->json('true');
         }
@@ -63,8 +63,9 @@ class QuestionController extends Controller
         if ($question) {
             $questionAnswer = new QuestionAnswer();
             $questionAnswer->question_id = $question->id;
-            $questionAnswer->answer_options = implode(",",$request->answer_options);
-            $questionAnswer->correct_answer = $request->correct_answer;
+            $questionAnswer->answer_options = implode(",", $request->answer_options);
+            if (!is_array($request->correct_answer)) $questionAnswer->correct_answer = $request->correct_answer;
+            else $questionAnswer->correct_answer = implode(",", $request->correct_answer);
 
             if ($questionAnswer->save()) {
                 return response()->json('success');
