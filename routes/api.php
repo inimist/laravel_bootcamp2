@@ -68,8 +68,11 @@ Route::group([
         //To restore all deleted data
         Route::get('/question/restoreAll', [App\Http\Controllers\API\QuestionController::class, 'restoreAll']);
 
+        Route::post('/user', [App\Http\Controllers\API\UserController::class, 'store']);
         Route::get('/user', [App\Http\Controllers\API\UserController::class, 'index']);
         Route::get('/user/{user}', [App\Http\Controllers\API\UserController::class, 'show']);
+        Route::put('/user/{user}', [App\Http\Controllers\API\UserController::class, 'update']);
+        Route::delete('/user/{user}', [App\Http\Controllers\API\UserController::class, 'delete']);
     });
 
     Route::post('/login', [App\Http\Controllers\API\AuthController::class, 'login']);

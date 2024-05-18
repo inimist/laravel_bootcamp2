@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator as FacadesValidator;
 
+use App\Http\Requests\UserRequest;
 use App\Models\User;
 
 
@@ -17,19 +15,9 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
         return response(User::all());
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -38,9 +26,19 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        //
+        try{
+            $data = $request->validated();
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => $data['password'],
+            ]);
+            return response( $user );
+        } catch (\Exception $e) {
+            return response(['error' => sprintf("Error while creating user. Error: %s", $e->getMessage())]);
+        }
     }
 
     /**
@@ -55,26 +53,25 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UserRequest $request, User $user)
     {
-        //
+        try{
+            $data = $request->validated();
+            $user->update([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => $data['password'],
+            ]);
+            return response( $user );
+        } catch (\Exception $e) {
+            return response(['error' => sprintf("Error while updating user. Error: %s", $e->getMessage())]);
+        }
     }
 
     /**
@@ -83,8 +80,13 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function delete(User $user)
     {
-        //
+        try{
+            $user->delete();
+            return response( $user );
+        } catch (\Exception $e) {
+            return response(['error' => sprintf("Error while deleting user. Error: %s", $e->getMessage())]);
+        }
     }
 }
