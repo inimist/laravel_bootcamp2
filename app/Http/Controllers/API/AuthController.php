@@ -2,44 +2,43 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+
+use App\Http\Requests\RegisterRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
+use App\Models\User;
 
 class AuthController extends Controller
 {
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->validated();
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user(); //this way we get whole user data
-            // $userId = Auth::id(); this way we get user id.
-            $token = Auth::user()->createToken('auth_token')->plainTextToken;
-            return response()->json(['token' => $token, 'userData' => $user]);
+            $token = $user->createToken('Api Auth Token')->accessToken;
+            return response(['token' => $token, 'user' => $user]);
         }
 
-        return response()->json('invalid credential');
+        return response(['error' => 'Login request failed'], 422);
     }
 
-    public function signup(Request $request)
+    public function signup(RegisterRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
-        ]);
-
-        $user = User::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'password' => bcrypt($request->input('password')),
-        ]);
-
-        $token = $user->createToken('token-name')->plainTextToken;
-
-        return response()->json(['userId' => $user->id, 'token' => $token]);
+        try{
+            $data = $request->validated();
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => $data['password'],
+            ]);
+            $token = $user->createToken('Api Auth Token')->accessToken;
+            return response(['user' => $user, 'token' => $token]);
+        } catch (\Exception $e) {
+            return response(['error' => sprintf("Error while signing up. Error: %s", $e->getMessage())]);
+        }
     }
 
     public function logout(Request $request)

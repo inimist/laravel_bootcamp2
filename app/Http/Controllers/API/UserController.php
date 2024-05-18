@@ -7,6 +7,9 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator as FacadesValidator;
 
+use App\Models\User;
+
+
 class UserController extends Controller
 {
     /**
@@ -16,17 +19,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $validator = FacadesValidator::make($request->all(), [
-            'user' => 'required',
-            'password' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        
-        return response()->json($request->input());
+        return response(User::all());
     }
 
     /**
@@ -56,9 +49,9 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(User $user)
     {
-        //
+        return response($user);
     }
 
     /**
