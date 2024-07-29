@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 
 use App\Http\Requests\UserRequest;
 use App\Models\User;
-
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -17,7 +17,12 @@ class UserController extends Controller
      */
     public function index()
     {
-        return response(User::all());
+        $user = Auth::user();
+        if ($user) {
+            return response()->json($user, 200);
+        }
+
+        return response()->json(['error' => 'Unauthorized1'], 401);
     }
 
     /**

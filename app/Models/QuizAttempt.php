@@ -9,8 +9,8 @@ class QuizAttempt extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['quiz_id', 'user_id', 'attempt', 'currentpage', 'preview', 'archived', 'timestart', 'timefinished'];
-    
+    protected $fillable = ['quiz_id', 'attempt', 'currentpage', 'preview', 'archived', 'name', 'email', 'timestart', 'timefinished'];
+
     protected $hidden = ['created_at', 'updated_at', 'deleted_at'];
 
     public function QuestionAttempt()

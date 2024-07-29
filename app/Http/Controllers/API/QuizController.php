@@ -142,7 +142,7 @@ class QuizController extends Controller
                 $quiz->quizSlots()->where('quiz_id', $id)->whereIn('question_id', $question_ids_to_delete)->delete();
             }
 
-            return response()->json('success', 200);
+            return response()->json(Quiz::with('quizSlots.question')->find($id));
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }
@@ -166,7 +166,19 @@ class QuizController extends Controller
         }
     }
 
-
+    public function quizQuestion(Request $request)
+    {
+        $quiz = Quiz::findOrFail( $request->quiz_id);
+        $existing_question_ids = $quiz->quizSlots()->pluck('question_id')->toArray();
+       
+        $slot = 1;
+        $quizSlot = new QuizSlot;
+        $quizSlot->quiz_id = $request->quiz_id;
+        $quizSlot->slot = $slot;
+        $quizSlot->question_id = $request->question_id;
+        $quizSlot->save();
+        return response()->json('success', 200);
+    }
 
     //this function below is created to store the associated data the question selected to the particular quiz
     // public function quizSlot(Request $request)

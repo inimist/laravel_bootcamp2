@@ -12,7 +12,8 @@ class Question extends Model
         'title',
         'description',
         'question_type_id',
-        'creator_id'
+        'creator_id',
+        'quiz_id'
     ];
 
     protected $hidden = ['created_at', 'updated_at', 'deleted_at'];

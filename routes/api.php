@@ -19,8 +19,8 @@ use App\Http\Controllers\API\AuthController;
 
 Route::group(
     ['prefix' => 'v1', 'namespace' => 'Api'],
-    function(Router $router){
-        Route::get('/', function(){
+    function (Router $router) {
+        Route::get('/', function () {
             return "Did you forget where you placed your keys??";
         });
     }
@@ -35,7 +35,8 @@ Route::group([
         Route::post('/logout', [AuthController::class, 'logout']);
         //Question Routes
         Route::post('/question/create', [App\Http\Controllers\API\QuestionController::class, 'store']);
-        Route::get('/question', [App\Http\Controllers\API\QuestionController::class, 'index']);
+        Route::get('/question', [App\Http\Controllers\API\QuestionController::class, 'index']); // all question 
+        Route::get('/quiz-question/{quizid}', [App\Http\Controllers\API\QuestionController::class, 'quizQuestions']); // quiz question get 
         Route::get('/question/edit/{id}', [App\Http\Controllers\API\QuestionController::class, 'edit']);
         Route::put('/question/update/{id}', [App\Http\Controllers\API\QuestionController::class, 'update']);
         Route::delete('/question/delete/{question}', [App\Http\Controllers\API\QuestionController::class, 'destroy']);
@@ -48,8 +49,9 @@ Route::group([
         Route::get('/quiz', [App\Http\Controllers\API\QuizController::class, 'index']);
         Route::get('/quiz/show/{id}', [App\Http\Controllers\API\QuizController::class, 'show']);
         Route::get('/quiz/edit/{id}', [App\Http\Controllers\API\QuizController::class, 'edit']);
-        Route::put('/quiz/update/{id}', [App\Http\Controllers\API\QuizController::class, 'update']);
+        Route::put('/quiz/update/{id}', [App\Http\Controllers\API\QuizController::class, 'update']); // adding question to quiz all selected at once
         Route::delete('/quiz/delete/{quiz}', [App\Http\Controllers\API\QuizController::class, 'destroy']);
+        Route::post('/quiz/quiz-question', [App\Http\Controllers\API\QuizController::class, 'quizQuestion']); // adding quesion to quiz single by single
 
         //Quiz_attempts Route
         Route::post('/quizAttempt/create', [App\Http\Controllers\API\QuizAttemptController::class, 'store']);

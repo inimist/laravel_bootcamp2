@@ -8,6 +8,7 @@ use App\Models\Question;
 use App\Models\QuestionAnswer;
 use App\Models\Quiz;
 use App\Models\QuizSlot;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -22,6 +23,17 @@ class QuestionController extends Controller
     {
         $question = Question::with('questionAnswers', 'questionType')->get();
         return response()->json($question);
+    }
+
+    public function quizQuestions($quizid)
+    {
+        $userId = Auth::id();
+        $questions = Question::with('questionAnswers', 'questionType')
+            ->where('quiz_id', $quizid)
+            ->where('creator_id', $userId)
+            ->get();
+
+        return response()->json($questions);
     }
 
     /**
@@ -58,6 +70,7 @@ class QuestionController extends Controller
             'description' => $request->description,
             'question_type_id' => $request->question_type_id,
             'creator_id' => $request->creator_id,
+            'quiz_id' => $request->quiz_id,
         ]);
 
         if ($question) {
@@ -124,8 +137,10 @@ class QuestionController extends Controller
             $question->creator_id = $request->creator_id;
 
             if ($question->save()) {
+                $answerOption = implode(",", $request->answer_options); // it is in array form that why need to convert it to string
+
                 $questionAnswer = QuestionAnswer::find($request->questionAnswerId); //this is the questionAnswer table primary key.
-                $questionAnswer->answer_options = $request->answer_options;
+                $questionAnswer->answer_options =  $answerOption;
                 $questionAnswer->correct_answer = $request->correct_answer;
 
                 if ($questionAnswer->save()) {
