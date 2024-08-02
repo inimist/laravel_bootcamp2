@@ -21,8 +21,6 @@ class UserController extends Controller
         if ($user) {
             return response()->json($user, 200);
         }
-
-        return response()->json(['error' => 'Unauthorized1'], 401);
     }
 
     /**

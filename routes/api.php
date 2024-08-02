@@ -56,6 +56,7 @@ Route::group([
         //Quiz_attempts Route
         Route::post('/quizAttempt/create', [App\Http\Controllers\API\QuizAttemptController::class, 'store']);
         Route::get('/quizAttempt/show/{id}', [App\Http\Controllers\API\QuizAttemptController::class, 'show']);
+        Route::get('/quizAttempt/{quizId}', [App\Http\Controllers\API\QuizAttemptController::class, 'index']);
 
         //Question_attempts Route
         Route::post('/questionAttempt/create', [App\Http\Controllers\API\QuestionAttemptController::class, 'store']);

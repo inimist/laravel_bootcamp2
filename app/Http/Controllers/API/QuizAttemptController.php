@@ -19,10 +19,15 @@ class QuizAttemptController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($quizId)
     {
-        //
+        // Fetch QuestionAttempt records that match the given quiz_id
+        $quizAttempt = QuizAttempt::where('quiz_id', $quizId)->get();
+
+        // Return the fetched data as a JSON response
+        return response()->json($quizAttempt);
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -119,7 +124,7 @@ class QuizAttemptController extends Controller
 
                     if ($question['question_type']['qtype'] === 'multiplechoice-one' && $value === $question['question_answers']['correct_answer']) {
                         $correctQuestions += 1;
-                    } elseif ($question['question_type']['qtype'] === 'truefalse' && $value) {
+                    } elseif ($question['question_type']['qtype'] === 'truefalse' && $value == 'true') {
                         $correctQuestions += 1;
                     } elseif ($question['question_type']['qtype'] === 'multiplechoice-multi') {
                         $correctAswer  = explode(",", $question['question_answers']['correct_answer']);
@@ -146,21 +151,19 @@ class QuizAttemptController extends Controller
 
         // Check if earned grade is not null and greater than or equal to the minimum pass percentage
         $result = $earned_grade !== null && $earned_grade >= $min_pass_percentage ? 'pass' : 'fail';
-
-
+        $state =  $result === 'pass' ? 'finished' : 'inprogress';
+      
         $quizAttempt = QuizAttempt::create([
-
             'quiz_id' => $quiz_id,
             'attempt' => 1,
             'timestart' => now(),
-            'state' =>  $result === 'pass' ? 'finished' : 'inprogress',
+            'state' => $state,
             'totalquestions' => $total_questions,
             'earned_grade' => $earned_grade,
             'name' => $request->name,
             'email' => $request->email,
             'result' =>  $result,
         ]);
-
 
         $questionAttemptData = [];
         $questionAttempt = $request->input('questionAttempt');
@@ -206,9 +209,9 @@ class QuizAttemptController extends Controller
             $quizAttempt->earned_grade = $earned_grade;
             $quizAttempt->correctquestions = $correctQuestions;
             $quizAttempt->totalquestions = $total_questions;
-            $quizAttempt->state =  $result === 'pass' ? 'finished' : 'inprogress';
+            $quizAttempt->state = $state;
             $quizAttempt->result =  $result;
-            $quizAttempt->save();
+            $quizAttempt->update();
         }
         return response()->json($quizAttempt);
     }

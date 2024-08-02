@@ -67,14 +67,6 @@ class QuizController extends Controller
     public function show($id)
     {
         $quiz = Quiz::with('quizSlots.question.questionAnswers', 'quizSlots.question.questionType')->find($id);
-
-        QuizAttempt::create([
-            'quiz_id' => $id,
-            'user_id' => 1,
-            'attempt' => 1,
-            'timestart' => now(),
-            'state' => 'inprogress'
-        ]);
         return response()->json($quiz);
     }
 
