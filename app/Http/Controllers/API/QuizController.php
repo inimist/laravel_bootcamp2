@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Quiz;
 use App\Models\QuizAttempt;
 use App\Models\QuizSlot;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class QuizController extends Controller
@@ -18,7 +19,12 @@ class QuizController extends Controller
      */
     public function index()
     {
-        return response()->json(Quiz::with('quizSlots.question.questionAnswers',  'quizSlots.question')->get());
+        $user = Auth::user();
+        $userId = $user->id;
+        $quizzes = Quiz::where('user_id', $userId)
+            ->with(['quizSlots.question.questionAnswers', 'quizSlots.question'])
+            ->get();
+        return response()->json($quizzes);
     }
 
     /**
@@ -51,6 +57,7 @@ class QuizController extends Controller
         $Quiz->name = $request->name;
         $Quiz->description = $request->description;
         $Quiz->minpassquestions = $request->minpassquestions;
+        $Quiz->user_id = $request->user_id;
         if ($Quiz->save()) {
             return response()->json('success');
         } else {
@@ -160,9 +167,9 @@ class QuizController extends Controller
 
     public function quizQuestion(Request $request)
     {
-        $quiz = Quiz::findOrFail( $request->quiz_id);
+        $quiz = Quiz::findOrFail($request->quiz_id);
         $existing_question_ids = $quiz->quizSlots()->pluck('question_id')->toArray();
-       
+
         $slot = 1;
         $quizSlot = new QuizSlot;
         $quizSlot->quiz_id = $request->quiz_id;
