@@ -76,6 +76,8 @@ Route::group([
         Route::get('/user/{user}', [App\Http\Controllers\API\UserController::class, 'show']);
         Route::put('/user/{user}', [App\Http\Controllers\API\UserController::class, 'update']);
         Route::delete('/user/{user}', [App\Http\Controllers\API\UserController::class, 'delete']);
+
+        Route::put('/updatePassword' , [AuthController::class, 'updatePassword']);
     });
 
     Route::post('/login', [App\Http\Controllers\API\AuthController::class, 'login']);
