@@ -120,7 +120,7 @@ class QuestionController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|unique:questions,title,' . $id,
-            'description' => 'required',
+           // 'description' => 'required',
             'question_type_id' => 'required',
             'answer_options' => 'required',
             'correct_answer' => 'required',

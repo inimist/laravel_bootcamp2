@@ -51,7 +51,9 @@ Route::group([
         Route::get('/quiz/edit/{id}', [App\Http\Controllers\API\QuizController::class, 'edit']);
         Route::put('/quiz/update/{id}', [App\Http\Controllers\API\QuizController::class, 'update']); // adding question to quiz all selected at once
         Route::delete('/quiz/delete/{quiz}', [App\Http\Controllers\API\QuizController::class, 'destroy']);
-        Route::post('/quiz/quiz-question', [App\Http\Controllers\API\QuizController::class, 'quizQuestion']); // adding quesion to quiz single by single
+        Route::post('/quiz/quiz-question', [App\Http\Controllers\API\QuizController::class, 'quizQuestion']);
+        Route::get('/selQuestions/{id}', [App\Http\Controllers\API\QuizController::class, 'selectedQuizQuestions']); // adding quesion to quiz single by single
+        Route::post('/updateQuestionOrder', [App\Http\Controllers\API\QuizController::class, 'updateQuestionOrder']);
 
         //Quiz_attempts Route
         Route::post('/quizAttempt/create', [App\Http\Controllers\API\QuizAttemptController::class, 'store']);
@@ -77,7 +79,7 @@ Route::group([
         Route::put('/user/{user}', [App\Http\Controllers\API\UserController::class, 'update']);
         Route::delete('/user/{user}', [App\Http\Controllers\API\UserController::class, 'delete']);
 
-        Route::put('/updatePassword' , [AuthController::class, 'updatePassword']);
+        Route::put('/updatePassword', [AuthController::class, 'updatePassword']);
     });
 
     Route::post('/login', [App\Http\Controllers\API\AuthController::class, 'login']);

@@ -9,6 +9,7 @@ use App\Models\QuizAttempt;
 use App\Models\QuizSlot;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Test\Constraint\ResponseIsRedirected;
 
 class QuizController extends Controller
 {
@@ -32,9 +33,7 @@ class QuizController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-    }
+    public function create() {}
 
 
     /**
@@ -100,7 +99,7 @@ class QuizController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'description' => 'required',
+            //  'description' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -192,4 +191,28 @@ class QuizController extends Controller
     //         }
     //     }
     // }
+
+    public function selectedQuizQuestions($id)
+    {
+        $quiz = Quiz::with(['quizSlots' => function ($query) {
+            $query->orderBy('slot', 'asc');
+        }, 'quizSlots.question'])->find($id);
+
+        return response()->json($quiz);
+    }
+
+
+    public function updateQuestionOrder(Request $request)
+    {
+        $quizId = $request->input('quizId');
+        $quizSlots = $request->input('quiz_slots');
+
+        foreach ($quizSlots as $slot) {
+            QuizSlot::where('id', $slot['id'])
+                ->where('quiz_id', $quizId)
+                ->update(['slot' => $slot['slot']]);
+        }
+
+        return response()->json(['message' => 'Quiz slots updated successfully!'], 200);
+    }
 }
