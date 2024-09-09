@@ -25,16 +25,16 @@ class QuestionController extends Controller
         return response()->json($question);
     }
 
-    // public function quizQuestions($quizid)
-    // {
-    //     $userId = Auth::id();
-    //     $questions = Question::with('questionAnswers', 'questionType')
-    //         ->where('quiz_id', $quizid)
-    //         ->where('creator_id', $userId)
-    //         ->get();
+    public function quizQuestions($quizid)
+    {
+        $userId = Auth::id();
+        $questions = Question::with('questionAnswers', 'questionType')
+            ->where('quiz_id', $quizid)
+            ->where('creator_id', $userId)
+            ->get();
 
-    //     return response()->json($questions);
-    // }
+        return response()->json($questions);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -114,14 +114,14 @@ class QuestionController extends Controller
     }
 
 
-    public function quizQuestions($id)
-    {
-        $question = QuizSlot::with('question', 'question.questionAnswers')
-            ->where('quiz_id', $id)
-            ->orderBy('slot', 'asc')
-            ->first();
-        return response()->json($question);
-    }
+    // public function quizQuestions($id)
+    // {
+    //     $question = QuizSlot::with('question', 'question.questionAnswers')
+    //         ->where('quiz_id', $id)
+    //         ->orderBy('slot', 'asc')
+    //         ->first();
+    //     return response()->json($question);
+    // }
     /**
      * Update the specified resource in storage.
      *
